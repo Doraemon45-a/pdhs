@@ -12,9 +12,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y wget
-        wget https://github.com/google/shaka-packager/releases/download/v2.6.1/packager-linux \
+        wget https://github.com/shaka-project/shaka-packager/releases/download/v2.6.2/packager-linux-x64 \
           -O /usr/local/bin/packager
         chmod +x /usr/local/bin/packager
+
 
     - name: Convert MPD to M3U8
       env:
