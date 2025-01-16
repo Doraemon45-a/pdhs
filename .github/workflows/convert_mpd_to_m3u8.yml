@@ -19,9 +19,9 @@ jobs:
 
     - name: Convert MPD to M3U8
       env:
-        MPD_URL: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/fpndxmzw6o/out/v1/70a50b1bda944628b8e7e66ab4069419/cenc.mpd"
-        KEY_ID: "fc12a94c41e0885dbea8a8d94f0a277d"
-        KEY: "fc045df077e7669666b1b230e9aa3901"
+        MPD_URL: "https://fsly.stream.peacocktv.com/Content/CMAF_OL1-CTR-4s/Live/channel(knbc)/master.mpd"
+        KEY_ID: "0045a118e231f1326bcdb45350b1ceaa"
+        KEY: "8c13afbfa54ea37a368b8b859021f6e3"
         OUTPUT_FILE: "output.m3u8"
       run: |
         echo "Starting MPD to M3U8 conversion with Shaka Packager..."
