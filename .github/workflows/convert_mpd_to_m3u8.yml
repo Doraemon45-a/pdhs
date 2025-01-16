@@ -1,0 +1,37 @@
+name: Convert MPD to M3U8
+
+on:
+  workflow_dispatch: # Memungkinkan workflow dijalankan manual dari GitHub UI
+
+jobs:
+  convert-mpd-to-m3u8:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install FFmpeg
+      run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+    - name: Convert MPD to M3U8
+      env:
+        MPD_URL: "https://av-ch-cdn.mncnow.id/live/eds/soccerchannel-test/sa_dash_vmx/soccerchannel-test.mpd" # Ganti dengan URL MPD Anda
+        CLEARKEY: "7ee9506b13480491d79b71c062ab5366" # Key Anda
+        OUTPUT_FILE: "output.m3u8"
+      run: |
+        echo "Starting MPD to M3U8 conversion..."
+
+        ffmpeg -decryption_key $CLEARKEY \
+               -i $MPD_URL \
+               -c:v copy -c:a copy \
+               -hls_time 4 -hls_playlist_type event \
+               $OUTPUT_FILE
+
+        echo "Conversion completed: $OUTPUT_FILE"
+
+    - name: Upload M3U8 to Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: converted-m3u8
+        path: output.m3u8
