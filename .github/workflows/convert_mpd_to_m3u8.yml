@@ -16,8 +16,8 @@ jobs:
 
     - name: Convert MPD to M3U8
       env:
-        MPD_URL: "https://av-ch-cdn.mncnow.id/live/eds/soccerchannel-test/sa_dash_vmx/soccerchannel-test.mpd" # Ganti dengan URL MPD Anda
-        CLEARKEY: "7ee9506b13480491d79b71c062ab5366" # Key Anda
+        MPD_URL: "http://test.tipiku.biz.id/drm/dash/17875_stream.mpd?hdnts=exp=1737043717~acl=/drm/dash/17875*~id=164435459~hmac=a71d14fb04726114dded77400b7f2630ac132e6e215b27522275525cf382ab5b" # Ganti dengan URL MPD Anda
+        CLEARKEY: "da9b3e7a19a1430b19047792fc6add67" # Key Anda
         OUTPUT_FILE: "output.m3u8"
       run: |
         echo "Starting MPD to M3U8 conversion..."
