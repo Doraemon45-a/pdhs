@@ -1,40 +1,57 @@
-name: Convert MPD to M3U8 with Shaka Packager
+name: MPD to M3U8 Conversion
 
 on:
-  workflow_dispatch: # Memungkinkan workflow dijalankan manual
+  workflow_dispatch:
+    inputs:
+      mpd_url:
+        description: "URL of the MPD file"
+        required: true
+        type: string
+      decryption_key:
+        description: "Decryption key for Widevine/ClearKey (optional)"
+        required: false
+        type: string
 
 jobs:
-  convert-mpd-to-m3u8:
+  convert:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Shaka Packager
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget
-        wget https://github.com/shaka-project/shaka-packager/releases/download/v3.4.1/packager-linux-x64 \
-          -O /usr/local/bin/packager
-        chmod +x /usr/local/bin/packager
+        sudo apt-get install -y wget aria2
+        
+        # Download Shaka Packager
+        wget -q https://github.com/shaka-project/shaka-packager/releases/download/v3.4.1/packager-linux-x64 -O packager
+        chmod +x packager
+        sudo mv packager /usr/local/bin/packager
 
+    - name: Validate MPD File
+      run: |
+        wget "${{ github.event.inputs.mpd_url }}" -O master.mpd || exit 1
+        echo "MPD file downloaded successfully."
 
     - name: Convert MPD to M3U8
-      env:
-        MPD_URL: "https://fsly.stream.peacocktv.com/Content/CMAF_OL1-CTR-4s/Live/channel(knbc)/master.mpd"
-        KEY_ID: "0045a118e231f1326bcdb45350b1ceaa"
-        KEY: "8c13afbfa54ea37a368b8b859021f6e3"
-        OUTPUT_FILE: "output.m3u8"
       run: |
-        echo "Starting MPD to M3U8 conversion with Shaka Packager..."
+        if [ -n "${{ github.event.inputs.decryption_key }}" ]; then
+          packager \
+            input=${{ github.event.inputs.mpd_url }},stream=video,output=output_video.mp4 \
+            --decryption_key=${{ github.event.inputs.decryption_key }} \
+            --enable_widevine_decryption
+        else
+          packager \
+            input=${{ github.event.inputs.mpd_url }},stream=video,output=output_video.mp4
+        fi
+      env:
+        MPD_URL: ${{ github.event.inputs.mpd_url }}
+        DECRYPTION_KEY: ${{ github.event.inputs.decryption_key }}
 
-        packager \
-          input=$MPD_URL,stream=video,output=video.mp4,drm_label=VIDEO:key_id=$KEY_ID:key=$KEY \
-          input=$MPD_URL,stream=audio,output=audio.mp4,drm_label=AUDIO:key_id=$KEY_ID:key=$KEY \
-          --mpd_output $OUTPUT_FILE
-
-        echo "Conversion completed: $OUTPUT_FILE"
-
-    - name: Upload M3U8 to Artifacts
+    - name: Upload Converted Files
       uses: actions/upload-artifact@v3
       with:
-        name: converted-m3u8
-        path: output.m3u8
+        name: converted-video
+        path: output_video.mp4
