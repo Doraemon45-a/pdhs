@@ -16,8 +16,8 @@ jobs:
 
     - name: Convert MPD to M3U8
       env:
-        MPD_URL: "https://live.ll.ww.aiv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/wf8usag51e/out/v1/bd3b0c314fff4bb1ab4693358f3cd2d3/cenc.mpd"
-        CLEARKEY: "63ac662dde310cfb4cc6f9b43b34196d" # Key Anda
+        MPD_URL: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/fpndxmzw6o/out/v1/70a50b1bda944628b8e7e66ab4069419/cenc.mpd"
+        CLEARKEY: "fc045df077e7669666b1b230e9aa3901" # Key Anda
         OUTPUT_FILE: "output.m3u8"
       run: |
         echo "Starting MPD to M3U8 conversion..."
