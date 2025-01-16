@@ -16,8 +16,8 @@ jobs:
 
     - name: Convert MPD to M3U8
       env:
-        MPD_URL: "http://test.tipiku.biz.id/drm/dash/17875_stream.mpd?hdnts=exp=1737043717~acl=/drm/dash/17875*~id=164435459~hmac=a71d14fb04726114dded77400b7f2630ac132e6e215b27522275525cf382ab5b" # Ganti dengan URL MPD Anda
-        CLEARKEY: "da9b3e7a19a1430b19047792fc6add67" # Key Anda
+        MPD_URL: "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/wf8usag51e/out/v1/bd3b0c314fff4bb1ab4693358f3cd2d3/cenc.mpd"
+        CLEARKEY: "63ac662dde310cfb4cc6f9b43b34196d" # Key Anda
         OUTPUT_FILE: "output.m3u8"
       run: |
         echo "Starting MPD to M3U8 conversion..."
