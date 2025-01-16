@@ -1,32 +1,34 @@
-name: Convert MPD to M3U8
+name: Convert MPD to M3U8 with Shaka Packager
 
 on:
-  workflow_dispatch: # Memungkinkan workflow dijalankan manual dari GitHub UI
+  workflow_dispatch: # Memungkinkan workflow dijalankan manual
 
 jobs:
   convert-mpd-to-m3u8:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-
-    - name: Install FFmpeg
-      run: sudo apt-get update && sudo apt-get install -y ffmpeg
+    - name: Install Shaka Packager
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget https://github.com/google/shaka-packager/releases/download/v2.6.1/packager-linux \
+          -O /usr/local/bin/packager
+        chmod +x /usr/local/bin/packager
 
     - name: Convert MPD to M3U8
       env:
         MPD_URL: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/fpndxmzw6o/out/v1/70a50b1bda944628b8e7e66ab4069419/cenc.mpd"
-        CLEARKEY: "fc045df077e7669666b1b230e9aa3901" # Key Anda
+        KEY_ID: "fc12a94c41e0885dbea8a8d94f0a277d"
+        KEY: "fc045df077e7669666b1b230e9aa3901"
         OUTPUT_FILE: "output.m3u8"
       run: |
-        echo "Starting MPD to M3U8 conversion..."
+        echo "Starting MPD to M3U8 conversion with Shaka Packager..."
 
-        ffmpeg -decryption_key $CLEARKEY \
-               -i $MPD_URL \
-               -c:v copy -c:a copy \
-               -hls_time 4 -hls_playlist_type event \
-               $OUTPUT_FILE
+        packager \
+          input=$MPD_URL,stream=video,output=video.mp4,drm_label=VIDEO:key_id=$KEY_ID:key=$KEY \
+          input=$MPD_URL,stream=audio,output=audio.mp4,drm_label=AUDIO:key_id=$KEY_ID:key=$KEY \
+          --mpd_output $OUTPUT_FILE
 
         echo "Conversion completed: $OUTPUT_FILE"
 
